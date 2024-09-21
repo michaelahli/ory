@@ -5,7 +5,7 @@ services:
     restart: on-failure
     command: 'migrate -c /etc/config/hydra/hydra.yml sql -e --yes'
     environment:
-      DSN: 'postgres://${HYDRA_USER}:${HYDRA_PASSWORD}@sabotdb:5432/${HYDRA_DATABASE}?sslmode=disable&max_conns=20&max_idle_conns=4'
+      DSN: '${HYDRA_DSN}'
     volumes:
 
       - type: bind
@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     command: 'serve -c /etc/config/hydra/hydra.yml all --dev'
     environment:
-      DSN: 'postgres://${HYDRA_USER}:${HYDRA_PASSWORD}@sabotdb:5432/${HYDRA_DATABASE}?sslmode=disable&max_conns=20&max_idle_conns=4'
+      DSN: '${HYDRA_DSN}'
       SECRETS_SYSTEM: '${HYDRA_SECRETS_SYSTEM}'
       OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT: '${HYDRA_OIDC_PAIRWISE_SALT}'
     volumes:
