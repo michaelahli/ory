@@ -1,8 +1,6 @@
 version: '3.8'
 services:
   hydra-migrate:
-    depends_on:
-      - sabotdb
     image: 'oryd/hydra:v2.2.0'
     restart: on-failure
     command: 'migrate -c /etc/config/hydra/hydra.yml sql -e --yes'
