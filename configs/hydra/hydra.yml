@@ -1,0 +1,82 @@
+serve:
+  public:
+    port: 4444
+    # host: hydra.app.stoxlify.com
+    cors:
+      enabled: true
+      # allowed_origins:
+      #   - https://stoxlify.com
+      #   - https://*.stoxlify.com
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+      allowed_headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Content-Type
+      allow_credentials: true
+      max_age: 10
+      debug: false
+  cookies:
+      same_site_mode: Lax
+  admin:
+    port: 4445
+    # host: hydra.app.stoxlify.com
+    cors:
+      enabled: true
+      # allowed_origins:
+      #   - https://stoxlify.com
+      #   - https://*.stoxlify.com
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+      allowed_headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Content-Type
+      allow_credentials: true
+      max_age: 10
+      debug: false
+
+log:
+  level: info
+  format: json
+
+urls:
+  self:
+    issuer: http://127.0.0.1:4444
+  consent: http://127.0.0.1:8000/authentication/consent
+  login: http://127.0.0.1:8000/authentication/login
+  logout: http://127.0.0.1:8000/authentication/logout
+  
+ttl:
+  login_consent_request: 1h
+  access_token: 1h
+  refresh_token: 720h
+  id_token: 1h
+  auth_code: 10m
+
+oauth2:
+  expose_internal_errors: false
+  hashers:
+    bcrypt:
+      cost: 10
+  pkce:
+    enforced: false
+    enforced_for_public_clients: false
+  session:
+    encrypt_at_rest: true
+
+oidc:
+  subject_identifiers:
+      supported_types:
+      - pairwise
+      - public

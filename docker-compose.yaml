@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  hydra-migrate:
+    depends_on:
+      - sabotdb
+    image: 'oryd/hydra:v2.2.0'
+    restart: on-failure
+    command: 'migrate -c /etc/config/hydra/hydra.yml sql -e --yes'
+    environment:
+      DSN: 'postgres://${HYDRA_USER}:${HYDRA_PASSWORD}@sabotdb:5432/${HYDRA_DATABASE}?sslmode=disable&max_conns=20&max_idle_conns=4'
+    volumes:
+
+      - type: bind
+        source: ./configs/hydra
+        target: /etc/config/hydra
+  hydra:
+    depends_on:
+      - hydra-migrate
+    image: 'oryd/hydra:v2.2.0'
+    restart: unless-stopped
+    command: 'serve -c /etc/config/hydra/hydra.yml all --dev'
+    environment:
+      DSN: 'postgres://${HYDRA_USER}:${HYDRA_PASSWORD}@sabotdb:5432/${HYDRA_DATABASE}?sslmode=disable&max_conns=20&max_idle_conns=4'
+      SECRETS_SYSTEM: '${HYDRA_SECRETS_SYSTEM}'
+      OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT: '${HYDRA_OIDC_PAIRWISE_SALT}'
+    volumes:
+
+      - type: bind
+        source: ./configs/hydra
+        target: /etc/config/hydra
