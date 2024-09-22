@@ -39,6 +39,8 @@ services:
     image: oryd/keto:v0.12.0-alpha.0
     depends_on:
       - keto-migrate
+    environment:
+      - DSN='${KETO_DSN}'
     volumes:
       - type: bind
         source: ./config
