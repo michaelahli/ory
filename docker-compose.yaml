@@ -1,47 +1,47 @@
 version: '3.8'
 services:
   hydra-migrate:
-    image: 'oryd/hydra:v2.2.0'
+    image: oryd/hydra:v2.2.0
     restart: on-failure
     command: 'migrate -c /etc/config/hydra/hydra.yml sql -e --yes'
     environment:
-      DSN: '${HYDRA_DSN}'
+      DSN: ${HYDRA_DSN}
     volumes:
-
       - type: bind
-        source: ./configs/hydra
-        target: /etc/config/hydra
+        source: ./configs/hydra/hydra.yml
+        target: /etc/config/hydra/hydra.yml
   hydra:
     depends_on:
       - hydra-migrate
-    image: 'oryd/hydra:v2.2.0'
+    image: oryd/hydra:v2.2.0
     restart: unless-stopped
     command: 'serve -c /etc/config/hydra/hydra.yml all --dev'
     environment:
-      DSN: '${HYDRA_DSN}'
-      SECRETS_SYSTEM: '${HYDRA_SECRETS_SYSTEM}'
-      OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT: '${HYDRA_OIDC_PAIRWISE_SALT}'
+      DSN: ${HYDRA_DSN}
+      SECRETS_SYSTEM: ${HYDRA_SECRETS_SYSTEM}
+      OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT: ${HYDRA_OIDC_PAIRWISE_SALT}
     volumes:
       - type: bind
-        source: ./configs/hydra
-        target: /etc/config/hydra
+        source: ./configs/hydra/hydra.yml
+        target: /etc/config/hydra/hydra.yml
   keto-migrate:
     image: oryd/keto:v0.12.0-alpha.0
+    restart: on-failure
+    command: 'migrate up -y'
+    environment:
+      DSN: ${KETO_DSN}
     volumes:
       - type: bind
-        source: ./configs/keto
-        target: /home/ory
-    environment:
-      - DSN='${KETO_DSN}'
-    command: [ "migrate", "up", "-y" ]
-    restart: on-failure
+        source: ./configs/keto/keto.yml
+        target: /home/ory/keto.yml
   keto:
-    image: oryd/keto:v0.12.0-alpha.0
     depends_on:
       - keto-migrate
+    image: oryd/keto:v0.12.0-alpha.0
+    restart: unless-stopped
     environment:
-      - DSN='${KETO_DSN}'
+      DSN: ${KETO_DSN}
     volumes:
       - type: bind
-        source: ./configs/keto
-        target: /home/ory
+        source: ./configs/keto/keto.yml
+        target: /home/ory/keto.yml
