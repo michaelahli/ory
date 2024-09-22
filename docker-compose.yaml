@@ -22,7 +22,24 @@ services:
       SECRETS_SYSTEM: '${HYDRA_SECRETS_SYSTEM}'
       OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT: '${HYDRA_OIDC_PAIRWISE_SALT}'
     volumes:
-
       - type: bind
         source: ./configs/hydra
         target: /etc/config/hydra
+  keto-migrate:
+    image: oryd/keto:v0.12.0-alpha.0
+    volumes:
+      - type: bind
+        source: ./config
+        target: /home/ory
+    environment:
+      - DSN='${KETO_DSN}'
+    command: [ "migrate", "up", "-y" ]
+    restart: on-failure
+  keto:
+    image: oryd/keto:v0.12.0-alpha.0
+    depends_on:
+      - keto-migrate
+    volumes:
+      - type: bind
+        source: ./config
+        target: /home/ory
