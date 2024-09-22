@@ -29,7 +29,7 @@ services:
     image: oryd/keto:v0.12.0-alpha.0
     volumes:
       - type: bind
-        source: ./config
+        source: ./configs/keto
         target: /home/ory
     environment:
       - DSN='${KETO_DSN}'
@@ -43,5 +43,5 @@ services:
       - DSN='${KETO_DSN}'
     volumes:
       - type: bind
-        source: ./config
+        source: ./configs/keto
         target: /home/ory
